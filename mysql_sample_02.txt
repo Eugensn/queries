@@ -1,0 +1,20 @@
+SELECT 
+                feedback.owner_id,
+                feedback.post_id, 
+                feedback.id,
+                feedback.from_id as user_id,
+                feedback.date,
+                feedback.text,
+                feedback.parents_stack as start_comment_id,
+                feedback.feedback_incriment,
+                feedback.parent_text,
+                feedback.reply_to_comment
+            FROM 
+                feedback LEFT JOIN botreplies ON
+                (feedback.owner_id = botreplies.owner_id 
+                AND feedback.post_id = botreplies.post_id
+                AND feedback.id = botreplies.reply_to_comment)
+                LEFT JOIN allowed ON (feedback.owner_id = allowed.id)
+            WHERE 
+                botreplies.feedback__feedback_incriment IS NULL
+                AND allowed.id IS NOT NULL
